@@ -4,7 +4,6 @@
 #define ERROR -1
 #define ElemType int
 #define Max(A, B) ((A) > (B) ? (A) : (B))
-#define FILENAME Tree.dot
 
 #define INSERT 'I'
 #define REMOVE 'R'
@@ -505,56 +504,3 @@ main() {
 		system("cls");
 	}
 }
-
-/*
-bool CheckParent(ALVTree T) {
-	if (T->left) {
-		if (T->left->parent != T)
-			return False;
-		if (CheckParent(T->left) == False)
-			return False;
-	}
-	if (T->right) {
-		if (T->right->parent != T)
-			return False;
-		if (CheckParent(T->right) == False)
-			return False;
-	}
-	return True;
-}
-main() {
-	ALVTree T;
-	T = NULL;
-	volatile bool error;
-	T = Insert_ALVTree(T, 1);
-	error = CheckParent(T);
-	T = Insert_ALVTree(T, 2);
-	error = CheckParent(T);
-	T = Insert_ALVTree(T, 3);
-	error = CheckParent(T);
-	T = Insert_ALVTree(T, 4);
-	error = CheckParent(T);
-	T = Insert_ALVTree(T, 5);
-	error = CheckParent(T);
-	T = Insert_ALVTree(T, 6);
-	error = CheckParent(T);
-	T = Insert_ALVTree(T, 7);
-	error = CheckParent(T);
-	T = Insert_ALVTree(T, 8);
-	error = CheckParent(T);
-	T = Insert_ALVTree(T, 9);
-	error = CheckParent(T);
-	T = Insert_ALVTree(T, 10);
-	error = CheckParent(T);
-	T = Insert_ALVTree(T, 11);
-	error = CheckParent(T);
-	T = Insert_ALVTree(T, 12);
-	error = CheckParent(T);
-	T = Insert_ALVTree(T, 13);
-	error = CheckParent(T);
-	T = Insert_ALVTree(T, 14);
-	error = CheckParent(T);
-	T = Insert_ALVTree(T, 15);
-	error = CheckParent(T);
-}
-*/
