@@ -4,12 +4,14 @@
 #define ERROR -1
 #define ElemType int
 #define Max(A, B) ((A) > (B) ? (A) : (B))
+#define FILENAME Tree.dot
 
 #define INSERT 'I'
 #define REMOVE 'R'
 #define SEARCH 'S'
 #define PRINT 'P'
 #define QUIT 'Q'
+#define DRAW 'D'
 
 typedef enum { False, True } bool;
 
@@ -43,6 +45,8 @@ ALVTree Insert_ALVTree(ALVTree T, ElemType data);
 ALVTree Remove_ALVTree(ALVTree T, ElemType data);
 bool Search_ALVTree(ALVTree T, ElemType data);
 void Print_ALVTree(ALVTree T, int layer);
+void Draw_ALVTree(ALVTree T);
+void Edge2Dot(ALVTree T, FILE *fp);
 
 void GetLayer(ALVTree T) {
 	if (T) {
@@ -74,6 +78,8 @@ ALVTree SLRotate(ALVTree T) {
 	if (T->right) {
 		ALVTreeNode* A = T, * B = T->right;
 		A->right = B->left;
+		if (B->left)
+			B->left->parent = A;
 		B->left = A;
 		B->parent = A->parent;
 		A->parent = B;
@@ -91,6 +97,8 @@ ALVTree SRRotate(ALVTree T) {
 	if (T->left) {
 		ALVTreeNode* A = T, * B = T->left;
 		A->left = B->right;
+		if (B->right)
+			B->right->parent = A;
 		B->right = A;
 		B->parent = A->parent;
 		A->parent = B;
@@ -306,7 +314,7 @@ ALVTree Remove_ALVTree(ALVTree T, ElemType data) {
 
 bool Search_ALVTree(ALVTree T, ElemType data) {
 	if (T) {
-		if (data = T->data)
+		if (data == T->data)
 			return True;
 		else if (data < T->data)
 			return Search_ALVTree(T->left, data);
@@ -340,11 +348,47 @@ void Print_ALVTree(ALVTree T, int layer) {
 	}
 }
 
+void Draw_ALVTree(ALVTree T) {
+	FILE* fp;
+	char filename[10];
+	sprintf(filename, "Tree.dot");
+	fp = fopen(filename, "w+");
+	if (fp) {
+		fprintf(fp, "digraph {\n");
+		Edge2Dot(T, fp);
+		fprintf(fp, "}");
+		fclose(fp);
+		system("dot -Tpng Tree.dot -o Tree.png");
+		system("del Tree.dot");
+		system("Tree.png");
+	}
+}
+
+void Edge2Dot(ALVTree T, FILE* fp) {
+	if (T->parent)
+		fprintf(fp, "\t%d -> %d;\n", T->parent->data, T->data);
+	if (T->left || T->right) {
+		if (T->left)
+			Edge2Dot(T->left, fp);
+		else
+			fprintf(fp, "\tNULL%d [label = \"NULL\"];\n\t%d -> NULL%d;\n", T->data, T->data, T->data);
+		if (T->right)
+			Edge2Dot(T->right, fp);
+		else
+			fprintf(fp, "\tNULL%d [label = \"NULL\"];\n\t%d -> NULL%d;\n", T->data, T->data, T->data);
+	}
+
+	if (!T->parent && !T->left && !T->right)
+		fprintf(fp, "%d;", T->data);
+}
+
 main() {
 	char c;
 	ALVTree T = NULL;
+	printf("The draw function REQUIRES Graphviz package!!!\n");
+	printf("You can download it from: http://www.graphviz.org/download/ \n");
 	while (1) {
-		printf("I: Insert\nR: Remove\nS: Search\nP: Print\nQ: Quit\n");
+		printf("I: Insert\nR: Remove\nS: Search\nP: Print\nD: Draw\nQ: Quit\n");
 		printf("Input Instruction:");
 		c = getchar();
 		switch (c) {
@@ -412,6 +456,19 @@ main() {
 			}
 			break;
 
+		case DRAW:
+			c = getchar();
+			if (c != '\n') {
+				printf("Invalid Instruction\n");
+				ClearLine();
+			}
+			else {
+				Draw_ALVTree(T);
+				printf("\n");
+			}
+			getch();
+			break;
+
 		case PRINT:
 			c = getchar();
 			if (c != '\n') {
@@ -448,3 +505,56 @@ main() {
 		system("cls");
 	}
 }
+
+/*
+bool CheckParent(ALVTree T) {
+	if (T->left) {
+		if (T->left->parent != T)
+			return False;
+		if (CheckParent(T->left) == False)
+			return False;
+	}
+	if (T->right) {
+		if (T->right->parent != T)
+			return False;
+		if (CheckParent(T->right) == False)
+			return False;
+	}
+	return True;
+}
+main() {
+	ALVTree T;
+	T = NULL;
+	volatile bool error;
+	T = Insert_ALVTree(T, 1);
+	error = CheckParent(T);
+	T = Insert_ALVTree(T, 2);
+	error = CheckParent(T);
+	T = Insert_ALVTree(T, 3);
+	error = CheckParent(T);
+	T = Insert_ALVTree(T, 4);
+	error = CheckParent(T);
+	T = Insert_ALVTree(T, 5);
+	error = CheckParent(T);
+	T = Insert_ALVTree(T, 6);
+	error = CheckParent(T);
+	T = Insert_ALVTree(T, 7);
+	error = CheckParent(T);
+	T = Insert_ALVTree(T, 8);
+	error = CheckParent(T);
+	T = Insert_ALVTree(T, 9);
+	error = CheckParent(T);
+	T = Insert_ALVTree(T, 10);
+	error = CheckParent(T);
+	T = Insert_ALVTree(T, 11);
+	error = CheckParent(T);
+	T = Insert_ALVTree(T, 12);
+	error = CheckParent(T);
+	T = Insert_ALVTree(T, 13);
+	error = CheckParent(T);
+	T = Insert_ALVTree(T, 14);
+	error = CheckParent(T);
+	T = Insert_ALVTree(T, 15);
+	error = CheckParent(T);
+}
+*/
